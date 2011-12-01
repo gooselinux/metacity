@@ -1,0 +1,34 @@
+From 6558e661d22d9c2a70df8ce4bddcea083e61c328 Mon Sep 17 00:00:00 2001
+From: Lennart Poettering <lennart@poettering.net>
+Date: Fri, 28 Aug 2009 05:43:14 +0200
+Subject: [PATCH] bell: increase bell rate limit from 1/s to 1/100ms
+
+Right now metacity issues only 1 bell event per second. This is
+feels buggy when triggering multiple alarm sounds in a terminal.
+
+This patch simple increases the limit to 1/100ms. 100ms is probably a
+good choice since the HIG recommends that all user reaction should
+happen within 100ms. With this applied pressing 'Left' in gnome-terminal
+feels much more responsive.
+
+https://bugzilla.redhat.com/show_bug.cgi?id=498608
+---
+ src/core/display.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/src/core/display.c b/src/core/display.c
+index b1661e3..bf22a9e 100644
+--- a/src/core/display.c
++++ b/src/core/display.c
+@@ -2385,7 +2385,7 @@ event_callback (XEvent   *event,
+ 	    {
+ 	    case XkbBellNotify:
+               if (XSERVER_TIME_IS_BEFORE(display->last_bell_time,
+-                                         xkb_ev->time - 1000))
++                                         xkb_ev->time - 100))
+                 {
+                   display->last_bell_time = xkb_ev->time;
+                   meta_bell_notify (display, xkb_ev);
+-- 
+1.6.4
+

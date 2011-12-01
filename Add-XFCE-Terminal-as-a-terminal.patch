@@ -1,0 +1,28 @@
+From bf7327acb41a43b2bdeee9f0855455ebaef8b816 Mon Sep 17 00:00:00 2001
+From: Owen W. Taylor <otaylor@fishsoup.net>
+Date: Wed, 21 Oct 2009 21:11:46 -0400
+Subject: [PATCH] Add XFCE Terminal as a terminal
+
+Include the XFCE terminal program 'Terminal' in the list of terminals.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=599262
+---
+ src/core/window.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/src/core/window.c b/src/core/window.c
+index 0ae6a01..b481ccf 100644
+--- a/src/core/window.c
++++ b/src/core/window.c
+@@ -1951,6 +1951,9 @@ __window_is_terminal (MetaWindow *window)
+   /* mlterm ("multi lingual terminal emulator on X") */
+   else if (strcmp (window->res_class, "mlterm") == 0)
+     return TRUE;
++  /* Terminal -- XFCE Terminal */
++  else if (strcmp (window->res_class, "Terminal") == 0)
++    return TRUE;
+ 
+   return FALSE;
+ }
+-- 
+1.6.5.rc2

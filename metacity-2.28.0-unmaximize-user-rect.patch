@@ -1,0 +1,14 @@
+diff -up metacity-2.28.0/src/core/window.c.unmaximize-user-rect metacity-2.28.0/src/core/window.c
+--- metacity-2.28.0/src/core/window.c.unmaximize-user-rect	2010-08-19 15:05:07.148083783 -0400
++++ metacity-2.28.0/src/core/window.c	2010-08-19 15:07:26.325334239 -0400
+@@ -2741,6 +2741,10 @@ meta_window_unmaximize_internal (MetaWin
+                                         target_rect.width,
+                                         target_rect.height);
+ 
++      /* Make sure user_rect is current.
++       */
++      force_save_user_window_placement (window);
++
+       if (window->display->grab_wireframe_active)
+         {
+           window->display->grab_wireframe_rect = target_rect;

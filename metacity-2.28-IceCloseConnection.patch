@@ -1,0 +1,46 @@
+From 13f6daee4752ae5b1fb61447deaca43161d5b0bc Mon Sep 17 00:00:00 2001
+From: Owen W. Taylor <otaylor@fishsoup.net>
+Date: Thu, 17 Dec 2009 16:20:18 -0500
+Subject: [PATCH] Don't call IceCloseConnection() behind libSM's back
+
+The ICE connection is opened by libSM; we can't just close it when
+we get an IOError on the ICE connection; instead call SmcCloseConnection()
+and mark the connection as closed. This will prevent a segfault if we
+exit out of the metacity main loop and get to meta_finalize().
+
+https://bugzilla.gnome.org/show_bug.cgi?id=604867
+---
+ src/core/session.c |   10 +++++++---
+ 1 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/src/core/session.c b/src/core/session.c
+index 96d8d71..2ca15c9 100644
+--- a/src/core/session.c
++++ b/src/core/session.c
+@@ -84,6 +84,7 @@ static char*       load_state         (const char *previous_save_file);
+ static void        regenerate_save_file (void);
+ static const char* full_save_file       (void);
+ static void        warn_about_lame_clients_and_finish_interact (gboolean shutdown);
++static void        disconnect         (void);
+ 
+ /* This is called when data is available on an ICE connection.  */
+ static gboolean
+@@ -106,9 +107,12 @@ process_ice_messages (GIOChannel *channel,
+       IcePointer context = IceGetConnectionContext (connection);
+ #endif
+       
+-      /* We were disconnected */
+-      IceSetShutdownNegotiation (connection, False);
+-      IceCloseConnection (connection);
++      /* We were disconnected; close our connection to the
++       * session manager, this will result in the ICE connection
++       * being cleaned up, since it is owned by libSM.
++       */
++      disconnect ();
++      meta_quit (META_EXIT_SUCCESS);
+ 
+       return FALSE;
+     }
+-- 
+1.6.5.2
+

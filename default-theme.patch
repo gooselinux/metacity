@@ -1,0 +1,12 @@
+diff -up metacity-2.19.55/src/metacity.schemas.in.in.default-theme metacity-2.19.55/src/metacity.schemas.in.in
+--- metacity-2.19.55/src/metacity.schemas.in.in.default-theme	2007-08-12 00:19:23.000000000 -0400
++++ metacity-2.19.55/src/metacity.schemas.in.in	2007-08-12 00:19:35.000000000 -0400
+@@ -212,7 +212,7 @@
+       <applyto>/apps/metacity/general/theme</applyto>
+       <owner>metacity</owner>
+       <type>string</type>
+-      <default>Clearlooks</default>
++      <default>Slider</default>
+       <locale name="C">
+          <short>Current theme</short>
+          <long>

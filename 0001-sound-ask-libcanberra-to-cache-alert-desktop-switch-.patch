@@ -1,0 +1,42 @@
+From 84e14cd8587c470e925e2fbf1a5a13c63686bcd4 Mon Sep 17 00:00:00 2001
+From: Lennart Poettering <lennart@poettering.net>
+Date: Fri, 28 Aug 2009 05:38:17 +0200
+Subject: [PATCH] sound: ask libcanberra to cache alert/desktop switch sounds
+
+These sounds are good candidates for caching in the sound server, to
+save a bit of CPU and make reaction faster. Hence, tell libcanberra to
+cache them.
+---
+ src/core/bell.c      |    1 +
+ src/core/workspace.c |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/src/core/bell.c b/src/core/bell.c
+index 92d1dbd..676ebac 100644
+--- a/src/core/bell.c
++++ b/src/core/bell.c
+@@ -292,6 +292,7 @@ meta_bell_notify (MetaDisplay *display,
+       ca_proplist_create (&p);
+       ca_proplist_sets (p, CA_PROP_EVENT_ID, "bell-window-system");
+       ca_proplist_sets (p, CA_PROP_EVENT_DESCRIPTION, _("Bell event"));
++      ca_proplist_sets (p, CA_PROP_CANBERRA_CACHE_CONTROL, "permanent");
+ 
+       window = meta_display_lookup_x_window (display, xkb_bell_event->window);
+       if (!window && (display->focus_window) && (display->focus_window->frame))
+diff --git a/src/core/display.c b/src/core/display.c
+index 55c374a..b1661e3 100644
+diff --git a/src/core/workspace.c b/src/core/workspace.c
+index a0170a6..063f867 100644
+--- a/src/core/workspace.c
++++ b/src/core/workspace.c
+@@ -358,6 +358,7 @@ static void workspace_switch_sound(MetaWorkspace *from,
+   ca_context_play(ca_gtk_context_get(), 1,
+                   CA_PROP_EVENT_ID, e,
+                   CA_PROP_EVENT_DESCRIPTION, "Desktop switched",
++                  CA_PROP_CANBERRA_CACHE_CONTROL, "permanent",
+                   NULL);
+ 
+  finish:
+-- 
+1.6.4
+

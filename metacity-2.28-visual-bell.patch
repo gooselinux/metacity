@@ -1,0 +1,41 @@
+From 80bd3db7b6711c90af19c7ee17e86aea0b804d7c Mon Sep 17 00:00:00 2001
+From: Owen W. Taylor <otaylor@fishsoup.net>
+Date: Fri, 20 Nov 2009 10:08:20 -0500
+Subject: [PATCH] Don't crash for visual bell on undecorated window
+
+When an XKB bell is sent on a undecorated window, flash the
+entire screen rather than crashing trying to flash the frame.
+
+Based on patch by Daniel Erat
+https://bugzilla.gnome.org/show_bug.cgi?id=598231
+---
+ src/core/bell.c |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/src/core/bell.c b/src/core/bell.c
+index 1e01cd6..9904f97 100644
+--- a/src/core/bell.c
++++ b/src/core/bell.c
+@@ -231,15 +231,16 @@ bell_flash_frame (MetaDisplay *display,
+   
+   g_assert (xkb_ev->xkb_type == XkbBellNotify);
+   window = meta_display_lookup_x_window (display, xkb_bell_event->window);
+-  if (!window && (display->focus_window) && (display->focus_window->frame))
++  if (!window)
+     {
+       window = display->focus_window;
+     }
+-  if (window)
++  if (window && window->frame)
+     {
+       bell_flash_window_frame (window);
+     }
+-  else /* revert to fullscreen flash if there's no focussed window */
++  else /* revert to fullscreen flash if there's no focused window or if it
++          has no frame */
+     {
+       bell_flash_fullscreen (display, xkb_ev);
+     }
+-- 
+1.6.5.2
+

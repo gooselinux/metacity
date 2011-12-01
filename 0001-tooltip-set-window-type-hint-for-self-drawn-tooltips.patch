@@ -1,0 +1,30 @@
+From 8132127a749b150d188631e03d36462838620a82 Mon Sep 17 00:00:00 2001
+From: Lennart Poettering <lennart@poettering.net>
+Date: Fri, 28 Aug 2009 07:29:11 +0200
+Subject: [PATCH] tooltip: set window type hint for self-drawn tooltips to GDK_WINDOW_TYPE_HINT_TOOLTIP
+
+libcanberra generates specific tooltip popup sounds and for that
+recognizes the tooltip windows by the GtkWindowTypeHint set for them.
+
+This trivial patch simply sets the hint for the self-drawn tooltips
+metacity uses.
+---
+ src/ui/fixedtip.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/src/ui/fixedtip.c b/src/ui/fixedtip.c
+index d2b95f2..31a6082 100644
+--- a/src/ui/fixedtip.c
++++ b/src/ui/fixedtip.c
+@@ -71,6 +71,8 @@ meta_fixed_tip_show (Display *xdisplay, int screen_number,
+   if (tip == NULL)
+     {      
+       tip = gtk_window_new (GTK_WINDOW_POPUP);
++      gtk_window_set_type_hint (GTK_WINDOW(tip), GDK_WINDOW_TYPE_HINT_TOOLTIP);
++
+       {
+         GdkScreen *gdk_screen;
+ 	GdkRectangle monitor;
+-- 
+1.6.4
+

@@ -1,0 +1,43 @@
+Patch from Travis Watkins
+https://bugzilla.gnome.org/show_bug.cgi?id=530702
+
+diff -ru metacity-2.27.0/src/core/screen.c metacity-2.27.0.new/src/core/screen.c
+--- metacity-2.27.0/src/core/screen.c	2008-10-19 16:15:38.000000000 -0500
++++ metacity-2.27.0.new/src/core/screen.c	2009-08-24 04:56:26.929023537 -0500
+@@ -2782,11 +2782,14 @@
+   char selection[32];
+   Atom a;
+ 
++  screen->wm_cm_timestamp = meta_display_get_current_time_roundtrip (
++                                                               screen->display);
++
+   g_snprintf (selection, sizeof(selection), "_NET_WM_CM_S%d", screen->number);
+   meta_verbose ("Setting selection: %s\n", selection);
+   a = XInternAtom (screen->display->xdisplay, selection, FALSE);
+   XSetSelectionOwner (screen->display->xdisplay, a, 
+-                      screen->wm_cm_selection_window, CurrentTime);
++                      screen->wm_cm_selection_window, screen->wm_cm_timestamp);
+ }
+ 
+ void
+@@ -2797,6 +2800,7 @@
+ 
+   g_snprintf (selection, sizeof(selection), "_NET_WM_CM_S%d", screen->number);
+   a = XInternAtom (screen->display->xdisplay, selection, FALSE);
+-  XSetSelectionOwner (screen->display->xdisplay, a, None, CurrentTime);
++  XSetSelectionOwner (screen->display->xdisplay, a,
++                      None, screen->wm_cm_timestamp);
+ }
+ #endif /* HAVE_COMPOSITE_EXTENSIONS */
+diff -ru metacity-2.27.0/src/core/screen-private.h metacity-2.27.0.new/src/core/screen-private.h
+--- metacity-2.27.0/src/core/screen-private.h	2008-10-19 16:15:38.000000000 -0500
++++ metacity-2.27.0.new/src/core/screen-private.h	2009-08-24 04:50:41.469785283 -0500
+@@ -113,6 +113,7 @@
+ 
+ #ifdef HAVE_COMPOSITE_EXTENSIONS
+   Window wm_cm_selection_window;
++  guint32 wm_cm_timestamp;
+ #endif
+ 
+   guint work_area_idle;
+
