@@ -3,7 +3,7 @@
 Summary: Unobtrusive window manager
 Name: metacity
 Version: 2.28.0
-Release: 20%{?dist}
+Release: 20%{?dist}.goose.2
 URL: http://download.gnome.org/sources/metacity/
 Source0: http://download.gnome.org/sources/metacity/2.28/metacity-%{version}.tar.bz2
 Patch0: default-theme.patch
@@ -267,6 +267,13 @@ fi
 %{_mandir}/man1/metacity-window-demo.1.gz
 
 %changelog
+
+* Thu Dec 29 2011 Clint Savage <herlo@gooseproject.org> - 2.28.0-20.goose.2
+- Rebuilding bootstrapped package
+
+* Thu Dec 29 2011 Clint Savage <herlo@gooseproject.org> - 2.28.0-20.goose.1
+- Unmodified, but building with mock for circular deps with control-center
+
 * Thu Aug 19 2010 Owen Taylor <otaylor@redhat.com> - 2.28.0-20
 - Fix cases where unmaximized size wouldn't be honored when unmaximizing
   in reduced resources mode.
